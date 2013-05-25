@@ -33,7 +33,6 @@ namespace GifzoWin
         { get { return (imageFormat != null && imageFormat == ImageFormat.Gif) || mp4Mode; } }
         public Setting setting;
         private string settingPath = "GifzoWin.config.xml";
-        private string url = "http://gifzo.net/";
         public ImageFormat imageFormat;
         private string filename, filepath;
         private VideoFileWriter videoWriter;
@@ -129,6 +128,7 @@ namespace GifzoWin
             catch (Exception)
             {
                 setting = new Setting();
+                setting.url = "http://gifzo.net/";
                 setting.milliseconds = 40;
                 setting.toStringFormat = "yyyyMMddHHmmss";
                 setting.mainKey = Keys.R;
@@ -142,6 +142,7 @@ namespace GifzoWin
                 SaveSetting();
             }
             LoadedSettingCheck();
+            SaveSetting();
         }
         private void Loaded()
         {
@@ -285,6 +286,7 @@ namespace GifzoWin
         }
         private void LoadedSettingCheck()
         {
+            if (setting.url == null) { setting.url = "http://gifzo.net/"; }
             if (setting.mainKey == Keys.None) { setting.mainKey = Keys.R; }
             if (setting.modifierKey == Keys.None) { setting.modifierKey = Keys.Control; }
             if (setting.exitKey == Keys.None) { setting.exitKey = Keys.Escape; }
@@ -476,7 +478,7 @@ namespace GifzoWin
             try
             {
                 System.Text.Encoding enc = System.Text.Encoding.GetEncoding("UTF-8");
-                System.Net.HttpWebRequest req = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(url);
+                System.Net.HttpWebRequest req = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(setting.url);
                 req.AutomaticDecompression = System.Net.DecompressionMethods.GZip;
                 req.Method = "POST";
                 string boundary = "OchinchinNametaiyo-u" + System.Environment.TickCount.ToString();
@@ -534,6 +536,7 @@ namespace GifzoWin
         public bool doUseModifierKey { get; set; }
         public Keys modifierKey { get; set; }
         public Keys exitKey { get; set; }
+        public string url { get; set; }
         public string imageFormat { get; set; }
         public string toStringFormat { get; set; }
         public bool doUploadMp4FileToConvertToGif { get; set; }
