@@ -139,6 +139,7 @@ namespace GifzoWin
                 setting.modifierKey = Keys.Control;
                 setting.exitKey = Keys.Escape;
                 setting.doShowContextMenu = false;
+                setting.saveLocalLocation = System.Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
                 SaveSetting();
             }
             LoadedSettingCheck();
@@ -197,7 +198,7 @@ namespace GifzoWin
                 else { FormStateCapturing(); }
             }
             filename = DateTime.Now.ToString(setting.toStringFormat) + "." + (mp4Mode ? ".Mp4" : imageFormat.ToString());
-            filepath = (mp4Mode && setting.doDeleteMp4File && setting.doUploadMp4FileToConvertToGif) ? Path.Combine(Path.GetTempPath(), filename) : filename;
+            filepath = (mp4Mode && setting.doDeleteMp4File && setting.doUploadMp4FileToConvertToGif) ? Path.Combine(Path.GetTempPath(), filename) : Path.Combine(setting.saveLocalLocation, filename);
             if (mp4Mode)
             {
                 videoWriter = new VideoFileWriter();
@@ -225,7 +226,7 @@ namespace GifzoWin
             if (mp4Mode)
             { videoWriter.Close(); }
             else if (imageFormat == ImageFormat.Gif)
-            { AnimationGif.SaveAnimatedGif(filename, imageMemoryStreams, (ushort)(setting.milliseconds / 10), 0); }
+            { AnimationGif.SaveAnimatedGif(filepath, imageMemoryStreams, (ushort)(setting.milliseconds / 10), 0); }
             else
             {
                 using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
@@ -539,6 +540,7 @@ namespace GifzoWin
         public bool doUploadMp4FileToConvertToGif { get; set; }
         public bool doDeleteMp4File { get; set; }
         public bool doShowContextMenu { get; set; }
+        public string saveLocalLocation { get; set; }
         public string note { get { return _note; } set { } }
         private string _note =
             "GifzoWin and Giflo Setting Note  \n\n" +
